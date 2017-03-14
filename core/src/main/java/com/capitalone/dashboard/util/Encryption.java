@@ -124,10 +124,10 @@ public final class Encryption {
     public static void main(String[] args) {
         try {
             String k = Encryption.getStringKey();
-//            System.out.println("Your secret key is:");
-//            System.out.println(k);
-//            System.out.println("Sample encrypted string with the above key for 'thisIsMyPassword' is:");
-//            System.out.println(Encryption.encryptString("thisIsMyPassword", k));
+            LOGGER.debug("Your secret key is:");
+            LOGGER.debug(k);
+            LOGGER.debug("Sample encrypted string with the above key for 'thisIsMyPassword' is:");
+            LOGGER.debug(Encryption.encryptString("thisIsMyPassword", k));
         } catch (EncryptionException e) {
             LOGGER.error("Encryption error: ", e);
         }
