@@ -66,6 +66,8 @@
     <jacoco.version>0.7.6.201602180812</jacoco.version>
     <joda-time.version>2.7</joda-time.version>
     <joda-convert.version>1.8.1</joda-convert.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <build>
