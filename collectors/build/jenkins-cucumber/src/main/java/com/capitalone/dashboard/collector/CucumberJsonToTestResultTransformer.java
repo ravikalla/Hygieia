@@ -22,27 +22,136 @@ public class CucumberJsonToTestResultTransformer implements Transformer<String, 
 
     @Override
     public List<TestSuite> transformer(String json) {
+    	boolean blnIsJSON = false;
+
         if (StringUtils.isEmpty(json)) {
             throw new IllegalArgumentException("json must not be empty");
         }
 
-        JSONParser parser = new JSONParser();
-
         List<TestSuite> suites = new ArrayList<>();
+
         try {
+            JSONParser parser = new JSONParser();
             // Parse features
             for (Object featureObj : (JSONArray) parser.parse(json)) {
                 JSONObject feature = (JSONObject) featureObj;
                 suites.add(parseFeatureAsTestSuite(feature));
             }
+            blnIsJSON = true;
         } catch (ParseException e) {
             LOG.error(e);
+            blnIsJSON = false;
+        }
+
+        // If not JSON, consider it as CSV file
+        if (!blnIsJSON) {
+            // Parse features : Add your parsing logic here
+            suites.add(parseTestSuite(json));
         }
 
         return suites;
     }
 
-    private TestSuite parseFeatureAsTestSuite(JSONObject featureElement) {
+    private TestSuite parseTestSuite(String strCSVContent) {
+        TestSuite suite = new TestSuite();
+        suite.setId("TestID");
+        suite.setType(TestSuiteType.Functional);
+        suite.setDescription("TestKeyword" + ":" + "Testname");
+
+        long duration = 0;
+
+        int testCaseTotalCount = 1;
+        int testCaseSkippedCount = 0, testCaseSuccessCount = 0, testCaseFailCount = 0, testCaseUnknownCount = 0;
+
+        TestCase testCase = parseTestCase();
+        duration += 1000;
+        testCaseSuccessCount++;
+//        testCaseFailCount++;
+//        testCaseSkippedCount++;
+//        testCaseUnknownCount++;
+
+        suite.getTestCases().add(testCase);
+        suite.setSuccessTestCaseCount(testCaseSuccessCount);
+        suite.setFailedTestCaseCount(testCaseFailCount);
+        suite.setSkippedTestCaseCount(testCaseSkippedCount);
+        suite.setTotalTestCaseCount(testCaseTotalCount);
+        suite.setUnknownStatusCount(testCaseUnknownCount);
+        suite.setDuration(duration);
+        if(testCaseFailCount > 0) {
+            suite.setStatus(TestCaseStatus.Failure);
+        } else if(testCaseSkippedCount > 0) {
+            suite.setStatus(TestCaseStatus.Skipped);
+        } else if (testCaseSuccessCount > 0){
+            suite.setStatus(TestCaseStatus.Success);
+        } else {
+            suite.setStatus(TestCaseStatus.Unknown);
+        }
+        return suite;
+	}
+	private TestCase parseTestCase() {
+	    TestCase testCase  = new TestCase();
+	    testCase.setId("TestId");
+	    testCase.setDescription("TestKeyword:TestName");
+	    // Parse each step as a TestCase
+	    int testStepSuccessCount = 0, testStepFailCount = 0, testStepSkippedCount = 0, testStepUnknownCount = 0;
+	    long testDuration = 0;
+
+        TestCaseStep testCaseStep = parseTestCaseStep();
+        testDuration += testCaseStep.getDuration();
+        // Count Statuses
+        switch(testCaseStep.getStatus()) {
+            case Success:
+                testStepSuccessCount++;
+                break;
+            case Failure:
+                testStepFailCount++;
+                break;
+            case Skipped:
+                testStepSkippedCount++;
+                break;
+            default:
+                testStepUnknownCount++;
+                break;
+
+        }
+        testCase.getTestSteps().add(testCaseStep);
+	    // Set Duration
+	    testCase.setDuration(testDuration);
+	    testCase.setSuccessTestStepCount(testStepSuccessCount);
+	    testCase.setSkippedTestStepCount(testStepSkippedCount);
+	    testCase.setFailedTestStepCount(testStepFailCount);
+	    testCase.setUnknownStatusCount(testStepUnknownCount);
+	    testCase.setTotalTestStepCount(testCase.getTestSteps().size());
+	    // Set Status
+	    if(testStepFailCount > 0) {
+	        testCase.setStatus(TestCaseStatus.Failure);
+	    } else if(testStepSkippedCount > 0) {
+	        testCase.setStatus(TestCaseStatus.Skipped);
+	    } else if (testStepSuccessCount > 0){
+	        testCase.setStatus(TestCaseStatus.Success);
+	    } else {
+	        testCase.setStatus(TestCaseStatus.Unknown);
+	    }
+	    return testCase;
+	}
+    private TestCaseStep parseTestCaseStep() {
+        TestCaseStep step  = new TestCaseStep();
+        step.setDescription("TestKeyword:TestName");
+        step.setId("TestLine");
+        TestCaseStatus stepStatus = TestCaseStatus.Unknown;
+        step.setDuration(10000 / 1000l);
+        stepStatus = parseBasicStatus();
+        step.setStatus(stepStatus);
+        return step;
+    }
+    private TestCaseStatus parseBasicStatus() {
+        return TestCaseStatus.Success;
+//        return TestCaseStatus.Failure;
+//        return TestCaseStatus.Skipped;
+//        return TestCaseStatus.Unknown;
+    }
+
+	private TestSuite parseFeatureAsTestSuite(JSONObject featureElement) {
         TestSuite suite = new TestSuite();
         suite.setId(getString(featureElement, "id"));
         suite.setType(TestSuiteType.Functional);

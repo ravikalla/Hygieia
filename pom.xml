@@ -89,29 +89,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${pmd.version}</version>
-        <configuration>
-          <excludeRoots>
-            <excludeRoot>${project.basedir}/target/generated-sources/java</excludeRoot>
-          </excludeRoots>
-          <rulesets>
-            <ruleset>${project.parent.basedir}/pmd.xml</ruleset>
-          </rulesets>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-              <!-- disabled for now: -->
-              <!--<goal>cpd-check</goal>-->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>

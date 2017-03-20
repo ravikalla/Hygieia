@@ -11,6 +11,7 @@ import com.capitalone.dashboard.model.TestSuiteType;
 import com.capitalone.dashboard.util.Supplier;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -142,7 +143,6 @@ public class DefaultJenkinsClientTest {
 
         assertThat(jobIt.hasNext(), is(false));
     }
-
 
     @Test
     public void test_endToend () throws Exception {

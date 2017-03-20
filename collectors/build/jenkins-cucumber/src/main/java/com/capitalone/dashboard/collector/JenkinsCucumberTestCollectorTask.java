@@ -92,7 +92,7 @@ public class JenkinsCucumberTestCollectorTask extends
             }
             else
             {
-            	log("WARNING: No Enabled Jobs found with artifacts pattern: " + jenkinsCucumberTestSettings.getCucumberJsonRegex());
+            	log("WARNING: No Enabled Jobs found with artifacts pattern: " + jenkinsCucumberTestSettings.getCucumberJsonRegex() + " : " + jenkinsCucumberTestSettings.getFuncTestCSVGenericRegex());
             }
             log("Finished", start);
         }
@@ -174,8 +174,9 @@ public class JenkinsCucumberTestCollectorTask extends
         int count = 0;
 
         for (JenkinsJob job : jobs) {
-            if (jenkinsClient.buildHasCucumberResults(job.getJobUrl())
-                    && isNewJob(collector, job)) {
+			if ((jenkinsClient.buildHasCucumberResults(job.getJobUrl())
+						|| jenkinsClient.buildHasFuncTestCSVResults(job.getJobUrl()))
+					&& isNewJob(collector, job)) {
                 job.setCollectorId(collector.getId());
                 job.setEnabled(false); // Do not enable for collection. Will be
                 // enabled when added to dashboard

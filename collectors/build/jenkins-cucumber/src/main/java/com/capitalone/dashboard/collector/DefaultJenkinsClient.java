@@ -47,6 +47,7 @@ public class DefaultJenkinsClient implements JenkinsClient {
     private final RestOperations rest;
     private final Transformer<String, List<TestSuite>> cucumberTransformer;
     private final Pattern cucumberJsonFilePattern;
+    private final Pattern funcTestCSVFilePattern;
     private final JenkinsSettings settings;
 
     private static final String JOBS_URL_SUFFIX = "/api/json?tree=jobs[name,url,builds[number,url],lastSuccessfulBuild[number]]";
@@ -61,6 +62,7 @@ public class DefaultJenkinsClient implements JenkinsClient {
         this.rest = restOperationsSupplier.get();
         this.cucumberTransformer = cucumberTransformer;
         this.cucumberJsonFilePattern = Pattern.compile(settings.getCucumberJsonRegex());
+        this.funcTestCSVFilePattern = Pattern.compile(settings.getFuncTestCSVGenericRegex());
         this.settings = settings;
     }
 
@@ -159,6 +161,41 @@ public class DefaultJenkinsClient implements JenkinsClient {
         return false;
     }
 
+    @Override
+    public boolean buildHasFuncTestCSVResults(String buildUrl) {
+
+        JSONObject buildJson;
+        try {
+            // Get Build info
+            buildJson = (JSONObject) new JSONParser().parse(getJson(buildUrl, LAST_SUCCESSFUL_BUILD_ARTIFACT_SUFFIX));
+
+            Boolean building = (Boolean) buildJson.get("building");
+
+            if (building != null && !building) {
+                for (Object artifactObj : (JSONArray) buildJson.get("artifacts")) {
+                    JSONObject artifact = (JSONObject) artifactObj;
+
+                    // return true if we find an archived file that matches the naming of the regex config
+                    if (cucumberJsonFilePattern.matcher(getString(artifact, "fileName")).matches()) {
+                        return true;
+	                        // TODO: maybe we want to validate that we can parse the json
+	                        //String cucumberJson = getCucumberJson(buildUrl, getString(artifact, "relativePath"));
+	                        //suites.addAll(cucumberTransformer.transformer(cucumberJson));
+                    }
+                }
+            }
+            return false;
+
+        } catch (ParseException e) {
+            LOG.error("Parsing jobs on instance: " + buildUrl, e);
+        } catch (HttpClientErrorException hce) {
+            if (hce.getStatusCode() != HttpStatus.NOT_FOUND) {
+                LOG.error("HTTP Client Exception for: " + buildUrl, hce);
+            }
+        }
+
+        return false;
+    }
 
     protected List<TestCapability> getCapabilities(JSONObject buildJson, String buildUrl) {
         List<TestCapability> capabilities = new ArrayList<>();
@@ -211,10 +248,58 @@ public class DefaultJenkinsClient implements JenkinsClient {
                     capabilities.add(cap);
                 }
             }
+            else if (funcTestCSVFilePattern.matcher(getString(artifact, "fileName")).matches()) {
+                String strCSVFileContent = getCucumberJson(buildUrl, getString(artifact, "relativePath"));
+                if (!StringUtils.isEmpty(strCSVFileContent)) {
+                    TestCapability cap = new TestCapability();
+                    // TODO : Ravi Kalla : Change below to "TestSuiteType.Regression"
+                    cap.setType(TestSuiteType.Functional);
+                    List<TestSuite> testSuites = cucumberTransformer.transformer(strCSVFileContent);
+                    cap.setDescription(getCapabilityDescription(funcTestCSVFilePattern.pattern(), getString(artifact, "relativePath")));
+                    cap.getTestSuites().addAll(testSuites); //add test suites
+                    long duration = 0;
+                    int testSuiteSkippedCount = 0, testSuiteSuccessCount = 0, testSuiteFailCount = 0, testSuiteUnknownCount = 0;
+                    for (TestSuite t : testSuites) {
+                        duration += t.getDuration();
+                        switch (t.getStatus()) {
+                            case Success:
+                                testSuiteSuccessCount++;
+                                break;
+                            case Failure:
+                                testSuiteFailCount++;
+                                break;
+                            case Skipped:
+                                testSuiteSkippedCount++;
+                                break;
+                            default:
+                                testSuiteUnknownCount++;
+                                break;
+                        }
+                    }
+                    if (testSuiteFailCount > 0) {
+                        cap.setStatus(TestCaseStatus.Failure);
+                    } else if (testSuiteSkippedCount > 0) {
+                        cap.setStatus(TestCaseStatus.Skipped);
+                    } else if (testSuiteSuccessCount > 0) {
+                        cap.setStatus(TestCaseStatus.Success);
+                    } else {
+                        cap.setStatus(TestCaseStatus.Unknown);
+                    }
+                    cap.setFailedTestSuiteCount(testSuiteFailCount);
+                    cap.setSkippedTestSuiteCount(testSuiteSkippedCount);
+                    cap.setSuccessTestSuiteCount(testSuiteSuccessCount);
+                    cap.setUnknownStatusTestSuiteCount(testSuiteUnknownCount);
+                    cap.setTotalTestSuiteCount(testSuites.size());
+                    cap.setDuration(duration);
+                    cap.setExecutionId(buildJson.get("number").toString());
+                    capabilities.add(cap);
+                }
+            }
         }
         return capabilities;
     }
 
+    // TODO : Ravi Test build functional test result equivalent
     protected TestResult buildTestResultObject(JSONObject buildJson, String buildUrl, List<TestCapability> capabilities) {
         if (!capabilities.isEmpty()) {
             // There are test suites so let's construct a TestResult to encapsulate these results
@@ -263,7 +348,10 @@ public class DefaultJenkinsClient implements JenkinsClient {
         try {
             JSONObject buildJson = (JSONObject) new JSONParser().parse(getJson(buildUrl, LAST_SUCCESSFUL_BUILD_ARTIFACT_SUFFIX));
             List<TestCapability> capabilities = getCapabilities(buildJson, buildUrl);
-            return buildTestResultObject(buildJson, buildUrl, capabilities);
+            TestResult buildTestResultObject = buildTestResultObject(buildJson, buildUrl, capabilities);
+			LOG.debug("Test Result : " + buildTestResultObject.getDescription() + " : " + capabilities.size() + " : "
+					+ capabilities.get(0).getDescription());
+            return buildTestResultObject;
         } catch (ParseException e) {
             LOG.error("Parsing jobs on instance: " + buildUrl, e);
         } catch (RestClientException rce) {
@@ -273,11 +361,11 @@ public class DefaultJenkinsClient implements JenkinsClient {
         return null;
     }
 
-
+    // TODO : Ravi Kalla : Should be from specific version of jenkins job and not from latest build
+    // TODO : Should be renamed to generic name as it is doing nothing specific to JSON
     protected String getCucumberJson(String buildUrl, String artifactRelativePath) {
         return getJson(StringUtils.removeEnd(buildUrl, "/") + LAST_SUCCESSFUL_BUILD, "/artifact/" + artifactRelativePath);
     }
-
 
     /**
      * @param cucumberJsonPattern
@@ -304,6 +392,7 @@ public class DefaultJenkinsClient implements JenkinsClient {
         return array == null ? new JSONArray() : (JSONArray) array;
     }
 
+//    TODO : Should be renamed to generic name as it is doing nothing specific to JSON
     private String getJson(String baseUrl, String endpoint) {
         String url = StringUtils.removeEnd(baseUrl, "/") + endpoint;
         ResponseEntity<String> result = null;

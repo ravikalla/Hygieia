@@ -1,8 +1,9 @@
 package com.capitalone.dashboard.collector;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 /**
  * Bean to hold settings specific to the Jenkins collector.
@@ -16,7 +17,8 @@ public class JenkinsSettings {
     private String cron;
     private List<String> servers;
     private String cucumberJsonRegex = "cucumber.json";
-    private String username;
+    private String funcTestCSVGenericRegex = "funcTestResults.csv";
+	private String username;
     private String apiKey;
     private String dockerLocalHostIP; //null if not running in docker on http://localhost
     
@@ -43,6 +45,14 @@ public class JenkinsSettings {
     public void setCucumberJsonRegex(String cucumberJsonRegex) {
         this.cucumberJsonRegex = cucumberJsonRegex;
     }
+
+    public String getFuncTestCSVGenericRegex() {
+		return funcTestCSVGenericRegex;
+	}
+
+	public void setFuncTestCSVGenericRegex(String funcTestCSVGenericRegex) {
+		this.funcTestCSVGenericRegex = funcTestCSVGenericRegex;
+	}
 
     public String getUsername() {
         return username;

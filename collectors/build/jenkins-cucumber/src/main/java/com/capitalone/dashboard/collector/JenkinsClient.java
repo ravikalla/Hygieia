@@ -28,6 +28,7 @@ public interface JenkinsClient {
      * @return boolean
      */
     boolean buildHasCucumberResults(String buildUrl);
+	boolean buildHasFuncTestCSVResults(String jobUrl);
 
     /**
      * This method is responsible for going to the Jenkins systems, accessing a specific build, getting the
