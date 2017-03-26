@@ -1,0 +1,7 @@
+/.settings/
+/logs/
+/target/
+/.classpath
+/.pmd
+/.pmdruleset.xml
+/.project
