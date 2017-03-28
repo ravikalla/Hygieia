@@ -257,7 +257,9 @@
 				} else {
 					ctrl.valid = true;
 					ctrl.collectorId = ctrl.featureTypeOptions[ctrl.selectedTypeIndex];
-					if (ctrl.collectorId.value === 'Jira') {
+//					Start : Updated by R K on 27-Mar-17 for Rally changes
+					if (ctrl.collectorId.value === 'Jira' || ctrl.collectorId.value === 'Rally') {
+//					End : Updated by R K on 27-Mar-17 for Rally changes
 	                    ctrl.hideEstimateMetricDropDown = false;
 	                } else {
 	                    ctrl.hideEstimateMetricDropDown = true;
@@ -327,7 +329,9 @@
 				ctrl.hideSprintTypeDropDown = true;
                 ctrl.hideListTypeDropDown = true;
 			} else {
-				if (ctrl.collectorId.value === 'Jira') {
+//				Start : Updated by R K on 27-Mar-17 for Rally changes
+				if (ctrl.collectorId.value === 'Jira' || ctrl.collectorId.value === 'Rally') {
+//				End : Updated by R K on 27-Mar-17 for Rally changes
 					ctrl.hideEstimateMetricDropDown = false;
 				} else {
 					ctrl.hideEstimateMetricDropDown = true;

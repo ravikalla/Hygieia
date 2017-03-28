@@ -18,7 +18,7 @@ public class FeatureCollector extends Collector {
 	 */
 	public static FeatureCollector prototype() {
 		FeatureCollector protoType = new FeatureCollector();
-		protoType.setName(FeatureCollectorConstants.JIRA);
+		protoType.setName(FeatureCollectorConstants.RALLY);
 		protoType.setOnline(true);
         protoType.setEnabled(true);
 		protoType.setCollectorType(CollectorType.ScopeOwner);

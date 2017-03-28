@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.model;
 
 /**
- * Represents a Tempo Team in JIRA.
+ * Represents a Tempo Team in RALLY.
  */
 public class Team {
     private String id;

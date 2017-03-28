@@ -153,6 +153,7 @@
         <module>collectors/deploy/udeploy</module>
         <module>collectors/deploy/xldeploy</module>
         <module>collectors/feature/jira</module>
+        <module>collectors/feature/rally</module>
         <module>collectors/feature/versionone</module>
         <module>collectors/misc/chat-ops</module>
         <module>collectors/scm/bitbucket</module>
@@ -191,6 +192,7 @@
         <module>collectors/deploy/udeploy</module>
         <module>collectors/deploy/xldeploy</module>
         <module>collectors/feature/jira</module>
+        <module>collectors/feature/rally</module>
         <module>collectors/feature/versionone</module>
         <module>collectors/misc/chat-ops</module>
         <module>collectors/scm/bitbucket</module>

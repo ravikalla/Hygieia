@@ -94,14 +94,6 @@ public class DefaultJenkinsClient implements JenkinsClient {
                         builds.add(hudsonBuild);
                     }
                 }
-                else {
-               		String strJobURL = getString(jsonJob, "url");
-               		Map<JenkinsJob, Set<Build>> instanceJobs = null;
-               		if (null != strJobURL && strJobURL.length() != 0)
-				instanceJobs = getInstanceJobs(strJobURL);
-			if (null != instanceJobs && instanceJobs.size() != 0)
-				result.putAll(instanceJobs);
-		}
             }
         } catch (ParseException e) {
             LOG.error("Parsing jobs on instance: " + instanceUrl, e);

@@ -16,20 +16,9 @@
 
 package com.capitalone.dashboard.util;
 
-import org.codehaus.jettison.json.JSONException;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.capitalone.dashboard.client.Sprint;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +26,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.codehaus.jettison.json.JSONException;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class houses any globally-used utility methods re-used by aspects of
@@ -118,6 +115,10 @@ public final class ClientUtil {
 		return "";
 	}
 
+//	public static void main(String[] args) {
+//		String canonicalDate = (new ClientUtil()).toCanonicalDate("2017-01-20T23:19:22.351Z");
+//		System.out.println("Date = " + canonicalDate);
+//	}
 	/**
 	 * Canonicalizes a given JSONArray to a basic List object to avoid the use
 	 * of JSON parsers.
@@ -261,87 +262,87 @@ public final class ClientUtil {
 	 * @return a list of Sprints that were parsed if possible.
 	 * @throws ParseException if a sprint could not be parsed
 	 */
-	public List<Sprint> parseSprints(Object data) throws ParseException {
-		List<Sprint> sprints = new ArrayList<>();
-		
-		if (data instanceof JSONArray) {
-			for (Object obj : (JSONArray)data) {
-				String rawToString = obj != null? obj.toString() : null;
-				
-				Sprint sprint = parseSprint(rawToString);
-				
-				sprints.add(sprint);
-			}
-		} else if (data instanceof org.codehaus.jettison.json.JSONArray) {
-			org.codehaus.jettison.json.JSONArray jsonA = (org.codehaus.jettison.json.JSONArray)data;
-			for (int i = 0; i < jsonA.length(); ++i) {
-				Object obj;
-				try {
-					obj = jsonA.get(i);
-				} catch (JSONException e) {
-					throw new RuntimeException("", e);
-				}
-				
-				String rawToString = obj != null? obj.toString() : null;
-				
-				Sprint sprint = parseSprint(rawToString);
-				
-				sprints.add(sprint);
-			}
-		}
-		
-		return sprints;
-	}
-	
-	@SuppressWarnings({ "PMD.NPathComplexity" })
-	public Sprint parseSprint(String rawSprintToString) throws ParseException {
-		Sprint sprint = new Sprint();
-		
-		if (rawSprintToString != null && rawSprintToString.matches(".*\\[.+\\][^\\]]*")) {
-			String rawToString = rawSprintToString.substring(rawSprintToString.indexOf('[') + 1, rawSprintToString.length() - 1);
-			String[] kvRaws = rawToString.split(SPRINT_SPLIT);
-			
-			for (String kvRaw : kvRaws) {
-				int eqIdx = kvRaw.indexOf('=');
-				
-				// just in case logic changes above
-				if (eqIdx > 0) {
-					String key = kvRaw.charAt(0) == ','? kvRaw.substring(1, eqIdx) : kvRaw.substring(0, eqIdx);
-					String valueAsStr = eqIdx == kvRaw.length() - 1? "" : kvRaw.substring(eqIdx + 1, kvRaw.length());
-					
-					if ("<null>".equalsIgnoreCase(valueAsStr)) {
-						valueAsStr = "";
-					}
-
-					if ("id".equals(key)) {
-						sprint.setId(Long.valueOf(valueAsStr));
-					} else if ("rapidViewId".equals(key)) {
-					    try {
-					        sprint.setRapidViewId(Long.valueOf(valueAsStr));
-					    } catch (NumberFormatException e) {
-					        LOGGER.error("rapidViewId found is not a number: " + valueAsStr + ", sprint: " + rawSprintToString);
-					    }
-                    } else if ("state".equals(key)) {
-						sprint.setState(valueAsStr);
-					} else if ("name".equals(key)) {
-						sprint.setName(valueAsStr);
-					} else if ("startDate".equals(key)) {
-						sprint.setStartDateStr(valueAsStr);
-					} else if ("endDate".equals(key)) {
-						sprint.setEndDateStr(valueAsStr);
-					} else if ("completeDate".equals(key)) {
-						sprint.setCompleteDateStr(valueAsStr);
-					} else if ("sequence".equals(key)) {
-						sprint.setSequence(Integer.valueOf(valueAsStr));
-					}
-				}
-			}
-		} else {
-			throw new ParseException("Unparsable sprint: " + rawSprintToString, 0);
-		}
-		
-		return sprint;
-	}
+//	public List<Sprint> parseSprints(Object data) throws ParseException {
+//		List<Sprint> sprints = new ArrayList<>();
+//		
+//		if (data instanceof JSONArray) {
+//			for (Object obj : (JSONArray)data) {
+//				String rawToString = obj != null? obj.toString() : null;
+//				
+//				Sprint sprint = parseSprint(rawToString);
+//				
+//				sprints.add(sprint);
+//			}
+//		} else if (data instanceof org.codehaus.jettison.json.JSONArray) {
+//			org.codehaus.jettison.json.JSONArray jsonA = (org.codehaus.jettison.json.JSONArray)data;
+//			for (int i = 0; i < jsonA.length(); ++i) {
+//				Object obj;
+//				try {
+//					obj = jsonA.get(i);
+//				} catch (JSONException e) {
+//					throw new RuntimeException("", e);
+//				}
+//				
+//				String rawToString = obj != null? obj.toString() : null;
+//				
+//				Sprint sprint = parseSprint(rawToString);
+//				
+//				sprints.add(sprint);
+//			}
+//		}
+//		
+//		return sprints;
+//	}
+//	
+//	@SuppressWarnings({ "PMD.NPathComplexity" })
+//	public Sprint parseSprint(String rawSprintToString) throws ParseException {
+//		Sprint sprint = new Sprint();
+//		
+//		if (rawSprintToString != null && rawSprintToString.matches(".*\\[.+\\][^\\]]*")) {
+//			String rawToString = rawSprintToString.substring(rawSprintToString.indexOf('[') + 1, rawSprintToString.length() - 1);
+//			String[] kvRaws = rawToString.split(SPRINT_SPLIT);
+//			
+//			for (String kvRaw : kvRaws) {
+//				int eqIdx = kvRaw.indexOf('=');
+//				
+//				// just in case logic changes above
+//				if (eqIdx > 0) {
+//					String key = kvRaw.charAt(0) == ','? kvRaw.substring(1, eqIdx) : kvRaw.substring(0, eqIdx);
+//					String valueAsStr = eqIdx == kvRaw.length() - 1? "" : kvRaw.substring(eqIdx + 1, kvRaw.length());
+//					
+//					if ("<null>".equalsIgnoreCase(valueAsStr)) {
+//						valueAsStr = "";
+//					}
+//
+//					if ("id".equals(key)) {
+//						sprint.setId(Long.valueOf(valueAsStr));
+//					} else if ("rapidViewId".equals(key)) {
+//					    try {
+//					        sprint.setRapidViewId(Long.valueOf(valueAsStr));
+//					    } catch (NumberFormatException e) {
+//					        LOGGER.error("rapidViewId found is not a number: " + valueAsStr + ", sprint: " + rawSprintToString);
+//					    }
+//                    } else if ("state".equals(key)) {
+//						sprint.setState(valueAsStr);
+//					} else if ("name".equals(key)) {
+//						sprint.setName(valueAsStr);
+//					} else if ("startDate".equals(key)) {
+//						sprint.setStartDateStr(valueAsStr);
+//					} else if ("endDate".equals(key)) {
+//						sprint.setEndDateStr(valueAsStr);
+//					} else if ("completeDate".equals(key)) {
+//						sprint.setCompleteDateStr(valueAsStr);
+//					} else if ("sequence".equals(key)) {
+//						sprint.setSequence(Integer.valueOf(valueAsStr));
+//					}
+//				}
+//			}
+//		} else {
+//			throw new ParseException("Unparsable sprint: " + rawSprintToString, 0);
+//		}
+//		
+//		return sprint;
+//	}
 
 	/**
 	 * Converts JSONArray to list artifact

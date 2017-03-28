@@ -6,13 +6,15 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.capitalone.dashboard.client.JiraClient;
+import com.capitalone.dashboard.RallyUtil;
+import com.capitalone.dashboard.client.dto.BasicProject;
 import com.capitalone.dashboard.model.Scope;
 import com.capitalone.dashboard.repository.FeatureCollectorRepository;
 import com.capitalone.dashboard.repository.ScopeRepository;
 import com.capitalone.dashboard.util.ClientUtil;
 import com.capitalone.dashboard.util.FeatureCollectorConstants;
 import com.capitalone.dashboard.util.FeatureSettings;
+import com.rallydev.rest.RallyRestApi;
 
 /**
  * This is the primary implemented/extended data collector for the feature
@@ -30,14 +32,14 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 	private final FeatureSettings featureSettings;
 	private final ScopeRepository projectRepo;
 	private final FeatureCollectorRepository featureCollectorRepository;
-	private final JiraClient jiraClient;
+	private final RallyRestApi rallyRestApi;
 
 	/**
 	 * Extends the constructor from the super class.
 	 *
 	 */
 	public ProjectDataClientImpl(FeatureSettings featureSettings, ScopeRepository projectRepository, 
-			FeatureCollectorRepository featureCollectorRepository, JiraClient jiraClient) {
+			FeatureCollectorRepository featureCollectorRepository, RallyRestApi rallyRestApi) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Constructing data collection for the feature widget, project-level data...");
 		}
@@ -45,7 +47,7 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 		this.featureSettings = featureSettings;
 		this.projectRepo = projectRepository;
 		this.featureCollectorRepository = featureCollectorRepository;
-		this.jiraClient = jiraClient;
+		this.rallyRestApi = rallyRestApi;
 	}
 
 	/**
@@ -55,7 +57,7 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 	public int updateProjectInformation() {
 		int count = 0;
 		
-		List<BasicProject> projects = jiraClient.getProjects();
+		List<BasicProject> projects = RallyUtil.getProjects(rallyRestApi);
 		
 		if (projects != null && !projects.isEmpty()) {
 			updateMongoInfo(projects);
@@ -69,61 +71,34 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 	 * Updates the MongoDB with a JSONArray received from the source system
 	 * back-end with story-based data.
 	 * 
-	 * @param currentPagedJiraRs
-	 *            A list response of Jira issues from the source system
+	 * @param currentPagedRallyRs
+	 *            A list response of Rally issues from the source system
 	 */
-	private void updateMongoInfo(List<BasicProject> currentPagedJiraRs) {
+	private void updateMongoInfo(List<BasicProject> currentPagedRallyRs) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Size of paged Jira response: " + (currentPagedJiraRs == null? 0 : currentPagedJiraRs.size()));
+			LOGGER.debug("Size of paged Rally response: " + (currentPagedRallyRs == null? 0 : currentPagedRallyRs.size()));
 		}
-		
-		if (currentPagedJiraRs != null) {
-			ObjectId jiraCollectorId = featureCollectorRepository.findByName(FeatureCollectorConstants.JIRA).getId();
-			for (BasicProject jiraScope : currentPagedJiraRs) {
-				String scopeId = TOOLS.sanitizeResponse(jiraScope.getId());
-				
-				/*
-				 * Initialize DOMs
-				 */
+
+		if (currentPagedRallyRs != null) {
+			ObjectId rallyCollectorId = featureCollectorRepository.findByName(FeatureCollectorConstants.RALLY).getId();
+			for (BasicProject rallyScope : currentPagedRallyRs) {
+				String scopeId = TOOLS.sanitizeResponse(rallyScope.getId());
+
 				Scope scope = findOneScope(scopeId);
-				
+
 				if (scope == null) {
 					scope = new Scope();
 				}
-
-				/*
-				 * Project Data
-				 */
-				// collectorId
-				scope.setCollectorId(jiraCollectorId);
-
-				// ID;
+				scope.setCollectorId(rallyCollectorId);
 				scope.setpId(TOOLS.sanitizeResponse(scopeId));
-
-				// name;
-				scope.setName(TOOLS.sanitizeResponse(jiraScope.getName()));
-
-				// beginDate - does not exist for jira
+				scope.setName(TOOLS.sanitizeResponse(rallyScope.getName()));
 				scope.setBeginDate("");
-
-				// endDate - does not exist for jira
 				scope.setEndDate("");
-
-				// changeDate - does not exist for jira
 				scope.setChangeDate("");
-
-				// assetState - does not exist for jira
 				scope.setAssetState("Active");
-
-				// isDeleted - does not exist for jira
 				scope.setIsDeleted("False");
-
-				// path - does not exist for Jira
-				scope.setProjectPath(TOOLS.sanitizeResponse(jiraScope.getName()));
-
-				// Saving back to MongoDB
+				scope.setProjectPath(TOOLS.sanitizeResponse(rallyScope.getName()));
 				projectRepo.save(scope);
-				
 			}
 		}
 	}
@@ -138,7 +113,7 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 		try {
 			List<Scope> response = projectRepo
 					.findTopByCollectorIdAndChangeDateGreaterThanOrderByChangeDateDesc(
-							featureCollectorRepository.findByName(FeatureCollectorConstants.JIRA).getId(),
+							featureCollectorRepository.findByName(FeatureCollectorConstants.RALLY).getId(),
 							featureSettings.getDeltaStartDate());
 			if ((response != null) && !response.isEmpty()) {
 				data = response.get(0).getChangeDate();
@@ -151,7 +126,7 @@ public class ProjectDataClientImpl implements ProjectDataClient {
 	}
 	
 	/**
-	 * Find the current collector item for the jira team id
+	 * Find the current collector item for the rally team id
 	 * 
 	 * @param teamId	the team id
 	 * @return			the collector item if it exists or null

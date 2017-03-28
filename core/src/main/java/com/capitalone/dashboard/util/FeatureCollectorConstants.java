@@ -11,6 +11,9 @@ package com.capitalone.dashboard.util;
  *
  */
 public final class FeatureCollectorConstants {
+//		Start : Updated by R K on 26-Mar-17 for adding Rally
+		public static final String RALLY = "Rally";
+//		End : Updated by R K on 26-Mar-17 for adding Rally
         public static final String JIRA = "Jira";
         public static final String VERSIONONE = "VersionOne";
         @SuppressWarnings("PMD.AvoidUsingHardCodedIP")

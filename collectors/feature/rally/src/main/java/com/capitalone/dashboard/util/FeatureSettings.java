@@ -44,15 +44,15 @@ public class FeatureSettings {
 	private int sprintEndPrior;
 	private int scheduledPriorMin;
 	// Jira-connection details
-	private String jiraBaseUrl;
+	private String rallyBaseUrl;
 	private String jiraQueryEndpoint;
-	private String jiraCredentials;
+	private String rallyCredentials;
 	private String jiraOauthAuthtoken;
 	private String jiraOauthRefreshtoken;
 	private String jiraOauthRedirecturi;
 	private String jiraOauthExpiretime;
-	private String jiraProxyUrl;
-	private String jiraProxyPort;
+	private String rallyProxyUrl;
+	private String rallyProxyPort;
 	/**
 	 * In Jira, general IssueType IDs are associated to various "issue"
 	 * attributes. However, there is one attribute which this collector's
@@ -219,12 +219,12 @@ public class FeatureSettings {
 		this.scheduledPriorMin = scheduledPriorMin;
 	}
 
-	public String getJiraBaseUrl() {
-		return this.jiraBaseUrl;
+	public String getRallyBaseUrl() {
+		return this.rallyBaseUrl;
 	}
 
-	public void setJiraBaseUrl(String jiraBaseUrl) {
-		this.jiraBaseUrl = jiraBaseUrl;
+	public void setRallyBaseUrl(String rallyBaseUrl) {
+		this.rallyBaseUrl = rallyBaseUrl;
 	}
 	
 	public String getJiraQueryEndpoint() {
@@ -235,12 +235,12 @@ public class FeatureSettings {
 		this.jiraQueryEndpoint = jiraQueryEndpoint;
 	}
 
-	public String getJiraCredentials() {
-		return this.jiraCredentials;
+	public String getRallyCredentials() {
+		return this.rallyCredentials;
 	}
 
-	public void setJiraCredentials(String jiraCredentials) {
-		this.jiraCredentials = jiraCredentials;
+	public void setRallyCredentials(String rallyCredentials) {
+		this.rallyCredentials = rallyCredentials;
 	}
 
 	public String getJiraOauthAuthtoken() {
@@ -275,22 +275,22 @@ public class FeatureSettings {
 		this.jiraOauthExpiretime = jiraOauthExpiretime;
 	}
 
-	public String getJiraProxyUrl() {
-		return this.jiraProxyUrl;
+	public String getRallyProxyUrl() {
+		return this.rallyProxyUrl;
 	}
 
-	public void setJiraProxyUrl(String jiraProxyUrl) {
-		this.jiraProxyUrl = jiraProxyUrl;
+	public void setRallyProxyUrl(String rallyProxyUrl) {
+		this.rallyProxyUrl = rallyProxyUrl;
 	}
 
-	public String getJiraProxyPort() {
-		return this.jiraProxyPort;
+	public String getRallyProxyPort() {
+		return this.rallyProxyPort;
 	}
 
-	public void setJiraProxyPort(String jiraProxyPort) {
-		this.jiraProxyPort = jiraProxyPort;
+	public void setRallyProxyPort(String rallyProxyPort) {
+		this.rallyProxyPort = rallyProxyPort;
 	}
-	
+
 	public String[] getJiraIssueTypeNames() {
 		return jiraIssueTypeNames;
 	}
