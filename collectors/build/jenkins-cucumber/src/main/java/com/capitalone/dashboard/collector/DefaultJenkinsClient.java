@@ -176,7 +176,7 @@ public class DefaultJenkinsClient implements JenkinsClient {
                     JSONObject artifact = (JSONObject) artifactObj;
 
                     // return true if we find an archived file that matches the naming of the regex config
-                    if (cucumberJsonFilePattern.matcher(getString(artifact, "fileName")).matches()) {
+                    if (funcTestCSVFilePattern.matcher(getString(artifact, "fileName")).matches()) {
                         return true;
 	                        // TODO: maybe we want to validate that we can parse the json
 	                        //String cucumberJson = getCucumberJson(buildUrl, getString(artifact, "relativePath"));
