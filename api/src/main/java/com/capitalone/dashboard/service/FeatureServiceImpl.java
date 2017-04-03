@@ -1,5 +1,24 @@
 package com.capitalone.dashboard.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TimeZone;
+
+import javax.xml.bind.DatatypeConverter;
+
+import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
@@ -13,22 +32,6 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.FeatureRepository;
 import com.capitalone.dashboard.util.FeatureCollectorConstants;
 import com.mysema.query.BooleanBuilder;
-
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import javax.xml.bind.DatatypeConverter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TimeZone;
 
 /**
  * The feature service.
@@ -51,6 +54,7 @@ import java.util.TimeZone;
  */
 @Service
 public class FeatureServiceImpl implements FeatureService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureServiceImpl.class);
 
 	private final ComponentRepository componentRepository;
 	private final FeatureRepository featureRepository;
@@ -214,6 +218,19 @@ public class FeatureServiceImpl implements FeatureService {
 	public DataResponse<SprintEstimate> getAggregatedSprintEstimates(ObjectId componentId,
 			String teamId, String projectId, Optional<String> agileType, Optional<String> estimateMetricType) {
 		Component component = componentRepository.findOne(componentId);
+LOGGER.info("221 : R K Test : FeatureServiceImpl.getAggregatedSprintEstimates(...) = {}", componentId);
+if (component != null) {
+	Map<CollectorType, List<CollectorItem>> collectorItems = component.getCollectorItems();
+	if (!CollectionUtils.isEmpty(collectorItems)) {
+		LOGGER.info("Collection size : {}", collectorItems.size());
+		collectorItems.forEach((objCollectorType, lstCollectorItems) -> {
+			LOGGER.info("objCollectorType : {} : {}", objCollectorType.toString(), objCollectorType.name());
+			lstCollectorItems.forEach(objCollectorItem -> {
+				LOGGER.info("objCollectorItem : {} : {} : {}", objCollectorItem.getId(), objCollectorItem.getDescription(), objCollectorItem.toString());
+			});
+		});
+	}
+}
 		if ((component == null) || CollectionUtils.isEmpty(component.getCollectorItems())
 				|| CollectionUtils
 						.isEmpty(component.getCollectorItems().get(CollectorType.ScopeOwner))
@@ -223,7 +240,7 @@ public class FeatureServiceImpl implements FeatureService {
 
 		CollectorItem item = component.getCollectorItems().get(CollectorType.ScopeOwner).get(0);
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
-		
+LOGGER.info("230 : R K Test : FeatureServiceImpl.getAggregatedSprintEstimates(...)");
 		SprintEstimate estimate = getSprintEstimates(teamId, projectId, item.getCollectorId(), agileType, estimateMetricType);
 		return new DataResponse<>(estimate, collector.getLastExecuted());
 	}
@@ -255,6 +272,7 @@ public class FeatureServiceImpl implements FeatureService {
 
 		CollectorItem item = component.getCollectorItems().get(CollectorType.ScopeOwner).get(0);
 		
+LOGGER.info("262 : R K Test : FeatureServiceImpl.getTotalEstimate(...)");
 		SprintEstimate estimate = getSprintEstimates(teamId, FeatureCollectorConstants.PROJECT_ID_ANY, item.getCollectorId(), agileType, estimateMetricType);
 		
 		List<Feature> list = Collections.singletonList(new Feature());
@@ -280,6 +298,9 @@ public class FeatureServiceImpl implements FeatureService {
 	@Deprecated
 	public DataResponse<List<Feature>> getInProgressEstimate(ObjectId componentId, String teamId,
 			Optional<String> agileType, Optional<String> estimateMetricType) {
+LOGGER.info("288 : R K Test : Start : FeatureServiceImpl.getInProgressEstimate(...) : " + componentId);
+System.out.println("289 : R K Test : Start : FeatureServiceImpl.getInProgressEstimate(...) : " + componentId);
+
 		Component component = componentRepository.findOne(componentId);
 
 		if ((component == null) || CollectionUtils.isEmpty(component.getCollectorItems())
@@ -295,8 +316,9 @@ public class FeatureServiceImpl implements FeatureService {
 		
 		List<Feature> list = Collections.singletonList(new Feature());
 		list.get(0).setsEstimate(Integer.toString(estimate.getInProgressEstimate()));
-		
+LOGGER.info("302 : R K Test : FeatureServiceImpl.getInProgressEstimate(...) : {}", estimate.getInProgressEstimate());
 		Collector collector = collectorRepository.findOne(item.getCollectorId());
+LOGGER.info("306 : R K Test : End : FeatureServiceImpl.getInProgressEstimate(...)");
 		return new DataResponse<>(list, collector.getLastExecuted());
 	}
 
@@ -327,6 +349,7 @@ public class FeatureServiceImpl implements FeatureService {
 
 		CollectorItem item = component.getCollectorItems().get(CollectorType.ScopeOwner).get(0);
 		
+LOGGER.info("334 : R K Test : FeatureServiceImpl.getDoneEstimate(...)");
 		SprintEstimate estimate = getSprintEstimates(teamId, FeatureCollectorConstants.PROJECT_ID_ANY, item.getCollectorId(), agileType, estimateMetricType);
 		
 		List<Feature> list = Collections.singletonList(new Feature());
@@ -369,6 +392,9 @@ public class FeatureServiceImpl implements FeatureService {
 	
 	@SuppressWarnings("PMD.NPathComplexity")
 	private SprintEstimate getSprintEstimates(String teamId, String projectId, ObjectId collectorId, Optional<String> agileType, Optional<String> estimateMetricType) {
+LOGGER.info("382 : R K Test : FeatureServiceImpl.getSprintEstimates(...) : {}", teamId);
+System.out.println("383 : R K Test : FeatureServiceImpl.getSprintEstimates(...) : " + teamId);
+
 		List<Feature> storyEstimates = getFeaturesForCurrentSprints(teamId, projectId, collectorId, agileType.isPresent()? agileType.get() : null, true);
 
 		int totalEstimate = 0;
@@ -388,6 +414,8 @@ public class FeatureServiceImpl implements FeatureService {
 					case "waiting":
 					case "impeded":
 						wipEstimate += estimate;
+//					case "backlog":
+//						wipEstimate += estimate;
 					break;
 					case "done":
 					case "accepted":
@@ -411,6 +439,11 @@ public class FeatureServiceImpl implements FeatureService {
 		SprintEstimate response = new SprintEstimate();
 		response.setOpenEstimate(openEstimate);
 		response.setInProgressEstimate(wipEstimate);
+//		Start : R K Test
+		response.setInProgressEstimate(50);
+//		End : R K Test
+LOGGER.info("418 : R K Test : FeatureServiceImpl.getSprintEstimates(...) : {}", wipEstimate);
+System.out.println("422 : R K Test : FeatureServiceImpl.getSprintEstimates(...) : " + wipEstimate);
 		response.setCompleteEstimate(doneEstimate);
 		response.setTotalEstimate(totalEstimate);
 

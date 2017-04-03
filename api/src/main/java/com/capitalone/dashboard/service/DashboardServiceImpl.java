@@ -14,10 +14,13 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.DashboardRepository;
 import com.capitalone.dashboard.repository.PipelineRepository;
 import com.capitalone.dashboard.repository.ServiceRepository;
+import com.capitalone.dashboard.rest.DashboardController;
 import com.capitalone.dashboard.util.UnsafeDeleteException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import java.util.Set;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
     private final DashboardRepository dashboardRepository;
     private final ComponentRepository componentRepository;

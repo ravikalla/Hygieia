@@ -10,10 +10,8 @@ import com.capitalone.dashboard.model.ScopeOwnerCollectorItem;
 import com.capitalone.dashboard.model.Team;
 import com.capitalone.dashboard.repository.FeatureCollectorRepository;
 import com.capitalone.dashboard.repository.ScopeOwnerRepository;
-import com.capitalone.dashboard.util.ClientUtil;
 import com.capitalone.dashboard.util.FeatureCollectorConstants;
 import com.capitalone.dashboard.util.FeatureSettings;
-import com.rallydev.rest.RallyRestApi;
 
 /**
  * This is the primary implemented/extended data collector for the feature
@@ -26,12 +24,12 @@ import com.rallydev.rest.RallyRestApi;
  */
 public class TeamDataClientImpl implements TeamDataClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamDataClientImpl.class);
-	private static final ClientUtil TOOLS = ClientUtil.getInstance();
+//	private static final ClientUtil TOOLS = ClientUtil.getInstance();
 
 	private final FeatureSettings featureSettings;
 	private final ScopeOwnerRepository teamRepo;
 	private final FeatureCollectorRepository featureCollectorRepository;
-	private final RallyRestApi rallyRestApi;
+//	private final RallyRestApi rallyRestApi;
 
 	/**
 	 * Extends the constructor from the super class.
@@ -39,7 +37,9 @@ public class TeamDataClientImpl implements TeamDataClient {
 	 * @param teamRepository
 	 */
 	public TeamDataClientImpl(FeatureCollectorRepository featureCollectorRepository, FeatureSettings featureSettings, 
-			ScopeOwnerRepository teamRepository, RallyRestApi rallyRestApi) {
+			ScopeOwnerRepository teamRepository
+//			, RallyRestApi rallyRestApi
+			) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Constructing data collection for the feature widget, team-level data...");
 		}
@@ -47,7 +47,7 @@ public class TeamDataClientImpl implements TeamDataClient {
 		this.featureSettings = featureSettings;
 		this.featureCollectorRepository = featureCollectorRepository;
 		this.teamRepo = teamRepository;
-		this.rallyRestApi = rallyRestApi;
+//		this.rallyRestApi = rallyRestApi;
 	}
 	
 	/**

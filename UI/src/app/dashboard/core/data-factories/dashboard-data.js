@@ -118,7 +118,7 @@
             // create a copy so we don't modify the original
             widget = angular.copy(widget);
 
-            console.log('New Widget Config', widget);
+            console.log('New Widget Config2', widget);
 
             var widgetId = widget.id;
 

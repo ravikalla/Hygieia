@@ -104,6 +104,7 @@
             }
 
             function upsertWidget(newConfig) {
+            	console.log('107 upsertWidget');
                 // update the local config id
                 // widget directive handles api updates
                 var foundMatch = false;

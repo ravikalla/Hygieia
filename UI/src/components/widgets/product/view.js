@@ -369,7 +369,7 @@
                 collectorItemIds: collectorItemIds,
                 options: options
             };
-
+console.log('372 : view.js');
             $scope.upsertWidget(data);
         }
 
