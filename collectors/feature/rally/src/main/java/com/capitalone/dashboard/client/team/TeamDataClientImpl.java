@@ -10,13 +10,8 @@ import com.capitalone.dashboard.model.ScopeOwnerCollectorItem;
 import com.capitalone.dashboard.model.Team;
 import com.capitalone.dashboard.repository.FeatureCollectorRepository;
 import com.capitalone.dashboard.repository.ScopeOwnerRepository;
-<<<<<<< HEAD
-=======
-import com.capitalone.dashboard.util.ClientUtil;
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 import com.capitalone.dashboard.util.FeatureCollectorConstants;
 import com.capitalone.dashboard.util.FeatureSettings;
-import com.rallydev.rest.RallyRestApi;
 
 /**
  * This is the primary implemented/extended data collector for the feature
@@ -29,20 +24,12 @@ import com.rallydev.rest.RallyRestApi;
  */
 public class TeamDataClientImpl implements TeamDataClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamDataClientImpl.class);
-<<<<<<< HEAD
 //	private static final ClientUtil TOOLS = ClientUtil.getInstance();
-=======
-	private static final ClientUtil TOOLS = ClientUtil.getInstance();
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 
 	private final FeatureSettings featureSettings;
 	private final ScopeOwnerRepository teamRepo;
 	private final FeatureCollectorRepository featureCollectorRepository;
-<<<<<<< HEAD
 //	private final RallyRestApi rallyRestApi;
-=======
-	private final RallyRestApi rallyRestApi;
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 
 	/**
 	 * Extends the constructor from the super class.
@@ -50,13 +37,9 @@ public class TeamDataClientImpl implements TeamDataClient {
 	 * @param teamRepository
 	 */
 	public TeamDataClientImpl(FeatureCollectorRepository featureCollectorRepository, FeatureSettings featureSettings, 
-<<<<<<< HEAD
 			ScopeOwnerRepository teamRepository
 //			, RallyRestApi rallyRestApi
 			) {
-=======
-			ScopeOwnerRepository teamRepository, RallyRestApi rallyRestApi) {
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Constructing data collection for the feature widget, team-level data...");
 		}
@@ -64,11 +47,7 @@ public class TeamDataClientImpl implements TeamDataClient {
 		this.featureSettings = featureSettings;
 		this.featureCollectorRepository = featureCollectorRepository;
 		this.teamRepo = teamRepository;
-<<<<<<< HEAD
 //		this.rallyRestApi = rallyRestApi;
-=======
-		this.rallyRestApi = rallyRestApi;
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 	}
 	
 	/**

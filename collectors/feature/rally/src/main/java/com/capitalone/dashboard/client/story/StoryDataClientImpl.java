@@ -248,13 +248,8 @@ public class StoryDataClientImpl implements StoryDataClient {
 		feature.setsProjectName(TOOLS.sanitizeResponse(project.getName()));
         feature.setsUrl(issue.getSelf().toString());
 
-<<<<<<< HEAD
         feature.setsEstimateTime(new Integer(Long.toString(System.currentTimeMillis() / (1000L * 60))));
 		feature.setsEstimate("1");
-=======
-        feature.setsEstimateTime(0);
-		feature.setsEstimate("0");
->>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 		feature.setIsDeleted("False");
 		feature.setsProjectBeginDate("");
 		feature.setsProjectEndDate("");
