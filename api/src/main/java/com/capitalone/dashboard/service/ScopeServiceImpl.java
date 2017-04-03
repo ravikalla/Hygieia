@@ -1,19 +1,28 @@
 package com.capitalone.dashboard.service;
 
-import com.capitalone.dashboard.model.*;
+import java.util.List;
+
+import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.capitalone.dashboard.model.Collector;
+import com.capitalone.dashboard.model.CollectorItem;
+import com.capitalone.dashboard.model.CollectorType;
+import com.capitalone.dashboard.model.Component;
+import com.capitalone.dashboard.model.DataResponse;
+import com.capitalone.dashboard.model.QScopeOwner;
+import com.capitalone.dashboard.model.Scope;
 import com.capitalone.dashboard.repository.CollectorRepository;
 import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.repository.ScopeRepository;
 import com.mysema.query.BooleanBuilder;
 
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 @Service
 public class ScopeServiceImpl implements ScopeService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScopeServiceImpl.class);
 
 	private final ComponentRepository componentRepository;
 	private final ScopeRepository scopeRepository;
@@ -57,6 +66,7 @@ public class ScopeServiceImpl implements ScopeService {
 		    Collector collector = collectorRepository
 				.findOne(scope.getCollectorId());
 		    scope.setCollector(collector);
+			LOGGER.debug("69 : ScopeServiceImpl.getAllScopes() : {} : {} : {}", scope.getCollectorId(), collector.getId(), collector.getName());
 		}
 
 		return scopes;
@@ -90,7 +100,7 @@ public class ScopeServiceImpl implements ScopeService {
 
 		Collector collector = collectorRepository
 				.findOne(item.getCollectorId());
-
+		LOGGER.debug("103 : ScopeServiceImpl.getScope() : {} : {} : {}", componentId, scopeId, collector.getId(), collector.getName());
 		return new DataResponse<>(scope, collector.getLastExecuted());
 	}
 }

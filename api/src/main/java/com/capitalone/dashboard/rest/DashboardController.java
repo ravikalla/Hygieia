@@ -123,6 +123,18 @@ public class DashboardController {
             consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<WidgetResponse> addWidget(@PathVariable ObjectId id, @RequestBody WidgetRequest request) {
 
+{
+LOGGER.info("127 : R K Test : DashboardController.addWidget(...)");
+List<ObjectId> collectorItemIds = request.getCollectorItemIds();
+if (null != collectorItemIds) {
+	LOGGER.info("130 : R K Test : DashboardController.addWidget(...) : CollectorID Size : {}", collectorItemIds.size());
+	if (collectorItemIds.size() > 0)
+		collectorItemIds.forEach(objId -> {
+			LOGGER.info("133 : R K Test : DashboardController.addWidget(...) : CollectorID value : {}", objId);
+		});
+}
+}
+
         Dashboard dashboard = dashboardService.get(id);
 
         Component component = dashboardService.associateCollectorToComponent(
@@ -140,6 +152,20 @@ public class DashboardController {
                                                        @RequestBody WidgetRequest request) {
         Component component = dashboardService.associateCollectorToComponent(
                 request.getComponentId(), request.getCollectorItemIds());
+
+{
+LOGGER.info("156 : R K Test : DashboardController.updateWidget(...) : {} : {}", id, widgetId);
+List<ObjectId> collectorItemIds = request.getCollectorItemIds();
+if (null != collectorItemIds) {
+	LOGGER.info("159 : R K Test : DashboardController.updateWidget(...) : CollectorID Size : {}", collectorItemIds.size());
+	if (collectorItemIds.size() > 0)
+		collectorItemIds.forEach(objId -> {
+			LOGGER.info("164 : R K Test : DashboardController.updateWidget(...) : CollectorID value : {}", objId);
+		});
+}
+if (null != component)
+	LOGGER.info("161 : R K Test : DashboardController.updateWidget(...) : Component Name : {}", component.getName());
+}
 
         Dashboard dashboard = dashboardService.get(id);
         Widget widget = request.updateWidget(dashboardService.getWidget(dashboard, widgetId));

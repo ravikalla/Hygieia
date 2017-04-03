@@ -23,10 +23,17 @@ import com.rallydev.rest.util.QueryFilter;
 public class RallyUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RallyUtil.class);
 
+<<<<<<< HEAD
+	private static final int INDEX_SUBSCRIPTION_NAME = 3;
+	private static final int INDEX_WORKSPACE_NAME = 2;
+	private static final int INDEX_PROJECT_NAME = 1;
+	private static final int INDEX_RELEASE_NAME = 0;
+=======
 	private static final int INDEX_SUBSCRIPTION_NAME = 0;
 	private static final int INDEX_WORKSPACE_NAME = 1;
 	private static final int INDEX_PROJECT_NAME = 2;
 	private static final int INDEX_RELEASE_NAME = 3;
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 
 	private static final int INT_PROJECT_AGE_IN_DAYS = 10000;
 	private static final int INT_RELEASE_AGE_IN_DAYS = 10000;
@@ -87,6 +94,17 @@ public class RallyUtil {
 										// String strReleaseDate =
 										// jsonRelease.get("ReleaseDate").getAsString();
 
+<<<<<<< HEAD
+										String[] arrConsolidatedProjectName = new String[4];
+										arrConsolidatedProjectName[INDEX_SUBSCRIPTION_NAME] = strSubscriptionName;
+										arrConsolidatedProjectName[INDEX_WORKSPACE_NAME] = strWorkspaceName;
+										arrConsolidatedProjectName[INDEX_PROJECT_NAME] = strProjectName;
+										arrConsolidatedProjectName[INDEX_RELEASE_NAME] = strReleaseName;
+
+										String strConsolidatedProjectName = String.join(":", arrConsolidatedProjectName);
+
+										BasicProject objBasicProject = new BasicProject(URI.create(strReferenceURL), null, lngObjectID, strConsolidatedProjectName);
+=======
 										String strConsolidatedProjectName = strSubscriptionName + ":" + strWorkspaceName
 												+ ":" + strProjectName + ":" + strReleaseName;
 										BasicProject objBasicProject = new BasicProject(URI.create(strReferenceURL),
@@ -94,6 +112,7 @@ public class RallyUtil {
 										// System.out.println("===" +
 										// strReleaseDate + " : " +
 										// objBasicProject);
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 										lstBasicProject.add(objBasicProject);
 									}
 								}
@@ -119,10 +138,15 @@ public class RallyUtil {
 						new Fetch("ObjectID", "Priority", "State", "Severity", "Name", "LastUpdateDate", "Iteration"));
 				defectRequest.setQueryFilter(new QueryFilter("Project.Name", "=", strNames[INDEX_PROJECT_NAME])
 						.and(new QueryFilter("Release.Name", "=", strNames[INDEX_RELEASE_NAME]))
+<<<<<<< HEAD
+//						.and(new QueryFilter("Workspace.Name", "=", strWorkspaceName))
+//						.and(new QueryFilter("Subscription.Name", "=", strSubscriptionName))
+=======
 						// .and(new QueryFilter("Workspace.Name", "=",
 						// strWorkspaceName))
 						// .and(new QueryFilter("Subscription.Name", "=",
 						// strSubscriptionName))
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 						.and(new QueryFilter("State", "<", "Closed")));
 				QueryResponse respDefects = restApi.query(defectRequest);
 				if (respDefects.wasSuccessful()) {
@@ -130,7 +154,12 @@ public class RallyUtil {
 					// respDefects.getTotalResultCount());
 					for (JsonElement projectDefect : respDefects.getResults()) {
 						JsonObject jsonDefect = projectDefect.getAsJsonObject();
+<<<<<<< HEAD
+//						LOGGER.debug("Defect details = {}", jsonDefect.toString());
+//System.out.println("Defect details = " + jsonDefect.toString());
+=======
 						System.out.println(String.format("Defect details = %s", jsonDefect.toString()));
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 
 						JsonElement jsonSprintName = jsonDefect.get("Iteration._refObjectName");
 						JsonElement jsonSprintURL = jsonDefect.get("Iteration._ref");
@@ -149,6 +178,24 @@ public class RallyUtil {
 								strSprintURL,
 								strSprintID);
 						lstIssues.add(objIssue);
+<<<<<<< HEAD
+
+//
+//
+//
+//
+//
+//						JsonObject jsonRequirements = jsonDefect.getAsJsonObject("Requirement");
+//						QueryRequest qryRequirements = new QueryRequest(jsonRequirements);
+//						QueryResponse respRequirements = restApi.query(qryRequirements);
+//						if (null != respRequirements && respRequirements.wasSuccessful()) {
+//							for (JsonElement respRequirement : respRequirements.getResults()) {
+//								JsonObject jsonRequirement = respRequirement.getAsJsonObject();
+//								System.out.println("Requirement : " + jsonRequirement.getAsString());
+//							}
+//						}
+=======
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 					}
 				}
 			}
@@ -168,9 +215,15 @@ public class RallyUtil {
 //			List<BasicProject> lstProjects = getProjects(restApi);
 //			List<Issue> lstIssues = getIssues(restApi, lstProjects);
 //
+<<<<<<< HEAD
+////			lstIssues.forEach(objIssue -> {
+////				System.out.println(objIssue.toString());
+////			});
+=======
 //			lstIssues.forEach(objIssue -> {
 //				System.out.println(objIssue.toString());
 //			});
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 //		} finally {
 //			restApi.close();
 //		}

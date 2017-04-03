@@ -103,7 +103,13 @@ public class FeatureCollectorTask extends CollectorTask<FeatureCollector> {
 		try {
 			//TODO : Remove this block as there is no team in Rally
 			long subscriptionDataStart = System.currentTimeMillis();
+<<<<<<< HEAD
+			TeamDataClientImpl teamData = new TeamDataClientImpl(this.featureCollectorRepository, this.featureSettings, this.teamRepository
+//					, rallyRestApi
+					);
+=======
 			TeamDataClientImpl teamData = new TeamDataClientImpl(this.featureCollectorRepository, this.featureSettings, this.teamRepository, rallyRestApi);
+>>>>>>> 34eb93dc7de91269fd3f8c8388c29aa09b6953c0
 			count = teamData.updateTeamInformation();
 			log("Team Data", subscriptionDataStart, count);
 

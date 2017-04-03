@@ -152,6 +152,7 @@
 
                 // when the widget closes if an object is passed we'll assume it's an updated
                 // widget configuration so try and send it to the api or update the existing one
+                console.log('155 : Widget');
                 $modal.open(modalConfig).result.then(upsertWidget);
             }
 
@@ -160,13 +161,14 @@
                     // use existing values if they're not defined
                     angular.extend($scope.widgetConfig, newWidgetConfig);
 
+                    console.log('1 New Widget Config1', $scope.widgetConfig);
                     // support single value or array values for collectorItemId
                     if ($scope.widgetConfig.collectorItemId) {
                         $scope.widgetConfig.collectorItemIds = [$scope.widgetConfig.collectorItemId];
                         delete $scope.widgetConfig.collectorItemId;
                     }
 
-                    console.log('New Widget Config', $scope.widgetConfig);
+                    console.log('2 New Widget Config1', $scope.widgetConfig);
                     dashboardData
                         .upsertWidget($scope.dashboard.id, $scope.widgetConfig)
                         .then(function (response) {

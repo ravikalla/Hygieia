@@ -41,12 +41,15 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
 
     @Override
     public final void run() {
-        LOGGER.info("Running Collector: {}", collectorName);
+        LOGGER.info("44 : R K Test : Running Collector: {}", collectorName);
         T collector = getCollectorRepository().findByName(collectorName);
         if (collector == null) {
             // Register new collector
             collector = getCollectorRepository().save(getCollector());
+            LOGGER.info("49 : R K Test : Running Collector: {}", collector.getName());
         } else {
+            LOGGER.info("51 : R K Test : Running Collector: {}", collector.getName());
+
             // In case the collector options changed via collectors properties setup.
             // We want to keep the existing collectors ID same as it ties to collector items.
             T newCollector = getCollector();
@@ -59,6 +62,8 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
         }
 
         if (collector.isEnabled()) {
+        	LOGGER.info("65 : R K Test : Running Collector: {}", collector.isEnabled());
+
             // Do collection run
             collect(collector);
 
@@ -66,6 +71,7 @@ public abstract class CollectorTask<T extends Collector> implements Runnable {
             collector.setLastExecuted(System.currentTimeMillis());
             getCollectorRepository().save(collector);
         }
+    	LOGGER.info("74 : R K Test : End : Running Collector");
     }
 
     @PostConstruct
